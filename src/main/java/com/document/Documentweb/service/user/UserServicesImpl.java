@@ -37,7 +37,7 @@ public class UserServicesImpl {
 
         Set<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
-        user.setRoles(roles);
+//`        user.setRoles(roles);`
 
         user = userRepository.save(user);
         return mapper.map(user, UserResDTO.class);
