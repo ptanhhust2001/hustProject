@@ -1,0 +1,20 @@
+spring:
+  application:
+  name: Documentweb
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/documentweb
+    username: root
+    password: 123456
+
+
+
+jwt:
+  signerKey: "3QCHBCeWYk5Nvf23KERk8Z45Bv3BHH3HZALSLWKq+gukKZP9ksb9/rvIVIUqqdFN"
+  expiration: 60  # 1 hour in seconds
+  refreshable-duration: 120

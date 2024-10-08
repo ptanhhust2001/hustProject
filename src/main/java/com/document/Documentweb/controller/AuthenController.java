@@ -4,6 +4,7 @@ import com.document.Documentweb.dto.ResponseDTO;
 import com.document.Documentweb.dto.authentication.AuthenticationReqDTO;
 import com.document.Documentweb.dto.authentication.AuthenticationResDTO;
 import com.document.Documentweb.dto.authentication.LogOutReqDTO;
+import com.document.Documentweb.dto.authentication.refresh.RefreshTokenReqDTO;
 import com.document.Documentweb.dto.introspect.IntrospectRequest;
 import com.document.Documentweb.dto.introspect.IntrospectResponse;
 import com.document.Documentweb.service.auth.AuthenticationService;
@@ -36,8 +37,13 @@ public class AuthenController {
 
     @PostMapping("/logout")
     public ResponseDTO<Void> logOut(@RequestBody LogOutReqDTO request) throws ParseException, JOSEException {
-        service.logOut(request);
+        service.logout(request);
         return ResponseDTO.success();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseDTO<AuthenticationResDTO> refreshToken(@RequestBody RefreshTokenReqDTO request) throws ParseException, JOSEException {
+        return ResponseDTO.success(service.refreshToken(request));
     }
 
 }

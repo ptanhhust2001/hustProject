@@ -30,7 +30,8 @@ public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {"/users",
             "/auth/token",
             "/auth/introspect",
-            "/auth/logout"};
+            "/auth/logout",
+            "/auth/refresh"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
