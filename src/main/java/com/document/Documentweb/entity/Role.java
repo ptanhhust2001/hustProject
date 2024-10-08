@@ -16,7 +16,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class Role {
     @Id
-    @Pattern(regexp = "^[A-Z0-9_]", message = EError.FORMAT_INVALID)
     private String name;
     private String description;
 

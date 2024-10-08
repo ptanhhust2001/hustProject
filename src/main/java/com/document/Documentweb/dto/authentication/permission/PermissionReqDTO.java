@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PermissionReqDTO {
-    @Pattern(regexp = "^[A-Z0-9_]", message = EError.FORMAT_INVALID)
+    @Pattern(regexp = "^[A-Z0-9_]*$", message = EError.FORMAT_INVALID)
     private String name;
     private String description;
 }

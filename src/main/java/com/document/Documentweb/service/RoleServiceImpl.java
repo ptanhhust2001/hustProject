@@ -5,6 +5,7 @@ import com.document.Documentweb.dto.authentication.role.RoleReqDTO;
 import com.document.Documentweb.dto.authentication.role.RoleResDTO;
 import com.document.Documentweb.entity.Permission;
 import com.document.Documentweb.entity.Role;
+import com.document.Documentweb.exception.AppException;
 import com.document.Documentweb.repository.RoleRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toSet;
+import static com.document.Documentweb.exception.ErrorCode.ROLE_NOT_EXISTED;
+
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,14 @@ public class RoleServiceImpl {
         repo.save(data);
 
         return ResponseDTO.success(mapper.map(data, RoleResDTO.class));
-
     }
 
+    public ResponseDTO<List<RoleResDTO>> getAll() {
+        return ResponseDTO.success(repo.findAll().stream().map(data ->  mapper.map(data, RoleResDTO.class)).toList());
+    }
+
+    public void delete(String name) {
+        Role data = repo.findById(name).orElseThrow(() -> new AppException(ROLE_NOT_EXISTED));
+        repo.deleteById(name);
+    }
 }
