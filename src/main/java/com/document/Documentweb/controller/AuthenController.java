@@ -3,6 +3,7 @@ package com.document.Documentweb.controller;
 import com.document.Documentweb.dto.ResponseDTO;
 import com.document.Documentweb.dto.authentication.AuthenticationReqDTO;
 import com.document.Documentweb.dto.authentication.AuthenticationResDTO;
+import com.document.Documentweb.dto.authentication.LogOutReqDTO;
 import com.document.Documentweb.dto.introspect.IntrospectRequest;
 import com.document.Documentweb.dto.introspect.IntrospectResponse;
 import com.document.Documentweb.service.auth.AuthenticationService;
@@ -31,6 +32,12 @@ public class AuthenController {
     public ResponseDTO<IntrospectResponse> introspect(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
         IntrospectResponse introspectResponse = service.introspect(request);
         return ResponseDTO.success(introspectResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseDTO<Void> logOut(@RequestBody LogOutReqDTO request) throws ParseException, JOSEException {
+        service.logOut(request);
+        return ResponseDTO.success();
     }
 
 }

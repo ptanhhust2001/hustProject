@@ -3,10 +3,12 @@ package com.document.Documentweb.service.user;
 import com.document.Documentweb.constrant.enums.Role;
 import com.document.Documentweb.dto.User.UserReqDTO;
 import com.document.Documentweb.dto.User.UserResDTO;
+import com.document.Documentweb.dto.User.UserUpdateDTO;
 import com.document.Documentweb.entity.User;
 import com.document.Documentweb.exception.AppException;
 import com.document.Documentweb.exception.ErrorCode;
 import com.document.Documentweb.repository.UserRepository;
+import com.document.Documentweb.service.RoleServiceImpl;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -26,6 +28,7 @@ import java.util.Set;
 public class UserServicesImpl {
     private final UserRepository userRepository;
     private final ModelMapper mapper;
+    private final RoleServiceImpl roleService;
 
     public UserResDTO createUser(UserReqDTO dto) {
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
@@ -43,7 +46,8 @@ public class UserServicesImpl {
         return mapper.map(user, UserResDTO.class);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('READ_DATA')")
     public List<UserResDTO> getUsers() {
         return userRepository.findAll().stream().map(user -> mapper.map(user, UserResDTO.class)).toList();
     }
@@ -63,5 +67,16 @@ public class UserServicesImpl {
 
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    public UserResDTO updateUser(long id, UserUpdateDTO dto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            user = mapper.map(dto, User.class);
+        user.setId(id);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRoles(new HashSet<>(roleService.getAllById(dto.getRoles())));
+        userRepository.save(user);
+        return mapper.map(user, UserResDTO.class);
     }
 }

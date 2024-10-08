@@ -1,7 +1,6 @@
 package com.document.Documentweb.configuration;
 
-import com.document.Documentweb.constrant.enums.Role;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,10 +24,13 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
     private String signerKey = "3QCHBCeWYk5Nvf23KERk8Z45Bv3BHH3HZALSLWKq+gukKZP9ksb9/rvIVIUqqdFN";
+    @Autowired
+    private CustomeJwtDecoder jwtDecoder;
 
     private final String[] PUBLIC_ENDPOINT = {"/users",
             "/auth/token",
-            "/auth/introspect"};
+            "/auth/introspect",
+            "/auth/logout"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -42,7 +44,7 @@ public class SecurityConfig {
         );
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.decoder(jwtDecoder())//decoder how to validate jwt token
+                        jwtConfigurer.decoder(jwtDecoder)//decoder how to validate jwt token
                         .jwtAuthenticationConverter(converter())
                         )
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
@@ -51,19 +53,19 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }
-    @Bean
+/*    @Bean
     JwtDecoder jwtDecoder() {
         SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
         return NimbusJwtDecoder
                 .withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS512)
                 .build();
-    }
+    }*/
 
     @Bean
     JwtAuthenticationConverter converter() {
         JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-        converter.setAuthorityPrefix("ROLE_");
+        converter.setAuthorityPrefix("");
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
         return jwtAuthenticationConverter;

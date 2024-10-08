@@ -46,4 +46,8 @@ public class RoleServiceImpl {
         Role data = repo.findById(name).orElseThrow(() -> new AppException(ROLE_NOT_EXISTED));
         repo.deleteById(name);
     }
+
+    public List<Role> getAllById(List<String> ids) {
+        return repo.findAllById(ids);
+    }
 }

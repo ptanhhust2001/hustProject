@@ -3,6 +3,7 @@ package com.document.Documentweb.controller;
 import com.document.Documentweb.dto.ResponseDTO;
 import com.document.Documentweb.dto.User.UserReqDTO;
 import com.document.Documentweb.dto.User.UserResDTO;
+import com.document.Documentweb.dto.User.UserUpdateDTO;
 import com.document.Documentweb.service.user.UserServicesImpl;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -50,5 +51,10 @@ public class UserController {
     public ResponseDTO<Void> deleteUser(@PathVariable Long id) {
         services.deleteUser(id);
         return ResponseDTO.success();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseDTO<UserResDTO> updateUser(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO dto) {
+        return ResponseDTO.success(services.updateUser(id, dto));
     }
 }
