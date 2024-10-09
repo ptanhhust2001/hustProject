@@ -1,8 +1,6 @@
-package com.document.Documentweb.entity;
+package com.document.Documentweb.entity.auth;
 
-import com.document.Documentweb.constrant.EError;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Entity

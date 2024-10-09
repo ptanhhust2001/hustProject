@@ -3,7 +3,7 @@ package com.document.Documentweb.service;
 import com.document.Documentweb.dto.ResponseDTO;
 import com.document.Documentweb.dto.authentication.permission.PermissionReqDTO;
 import com.document.Documentweb.dto.authentication.permission.PermissionResDTO;
-import com.document.Documentweb.entity.Permission;
+import com.document.Documentweb.entity.auth.Permission;
 import com.document.Documentweb.repository.PermissionRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;

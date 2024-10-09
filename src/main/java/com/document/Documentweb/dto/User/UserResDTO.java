@@ -1,5 +1,5 @@
 package com.document.Documentweb.dto.User;
-import com.document.Documentweb.entity.Role;
+import com.document.Documentweb.entity.auth.Role;
 import lombok.Data;
 
 import java.time.LocalDate;

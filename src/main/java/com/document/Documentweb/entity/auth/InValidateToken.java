@@ -1,4 +1,4 @@
-package com.document.Documentweb.entity;
+package com.document.Documentweb.entity.auth;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

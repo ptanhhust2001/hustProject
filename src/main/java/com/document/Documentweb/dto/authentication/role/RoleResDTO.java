@@ -1,6 +1,6 @@
 package com.document.Documentweb.dto.authentication.role;
 
-import com.document.Documentweb.entity.Permission;
+import com.document.Documentweb.entity.auth.Permission;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
