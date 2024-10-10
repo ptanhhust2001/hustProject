@@ -7,7 +7,7 @@ import com.document.Documentweb.dto.authentication.LogOutReqDTO;
 import com.document.Documentweb.dto.authentication.refresh.RefreshTokenReqDTO;
 import com.document.Documentweb.dto.introspect.IntrospectRequest;
 import com.document.Documentweb.dto.introspect.IntrospectResponse;
-import com.document.Documentweb.service.auth.AuthenticationService;
+import com.document.Documentweb.service.auth.IAuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +21,7 @@ import java.text.ParseException;
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthenController {
-    private final AuthenticationService service;
+    private final IAuthenticationService service;
 
     @PostMapping("/token")
     public ResponseDTO<AuthenticationResDTO> authentication(@RequestBody AuthenticationReqDTO request) {

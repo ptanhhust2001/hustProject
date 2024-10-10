@@ -25,11 +25,12 @@ import java.util.Set;
 
 @AllArgsConstructor
 @Service
-public class UserServicesImpl {
+public class UserServicesImpl implements IUserService{
     private final UserRepository userRepository;
     private final ModelMapper mapper;
     private final RoleServiceImpl roleService;
 
+    @Override
     public UserResDTO createUser(UserReqDTO dto) {
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -46,18 +47,20 @@ public class UserServicesImpl {
         return mapper.map(user, UserResDTO.class);
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
     @PreAuthorize("hasAuthority('READ_DATA')")
+    @Override
     public List<UserResDTO> getUsers() {
         return userRepository.findAll().stream().map(user -> mapper.map(user, UserResDTO.class)).toList();
     }
 
     @PostAuthorize("returnObject.username == authentication.name || hasRole('ADMIN')")
+    @Override
     public UserResDTO getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return mapper.map(user, UserResDTO.class);
     }
 
+    @Override
     public UserResDTO getCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -65,10 +68,12 @@ public class UserServicesImpl {
         return mapper.map(user, UserResDTO.class);
     }
 
+    @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
     }
 
+    @Override
     public UserResDTO updateUser(long id, UserUpdateDTO dto) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
             user = mapper.map(dto, User.class);

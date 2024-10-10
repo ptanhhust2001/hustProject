@@ -4,7 +4,7 @@ import com.document.Documentweb.dto.ResponseDTO;
 import com.document.Documentweb.dto.User.UserReqDTO;
 import com.document.Documentweb.dto.User.UserResDTO;
 import com.document.Documentweb.dto.User.UserUpdateDTO;
-import com.document.Documentweb.service.user.UserServicesImpl;
+import com.document.Documentweb.service.user.IUserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class UserController {
-    UserServicesImpl services;
+    IUserService services;
 
     @GetMapping
     public ResponseDTO<List<UserResDTO>> getAllUsers() {

@@ -1,11 +1,16 @@
 package com.document.Documentweb.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
+@Entity
+@Table(name = "comment")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Comment {
 
@@ -15,7 +20,8 @@ public class Comment {
 
     String name;
 
-    @OneToMany
-    List<Post> posts;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    Post post;
 
 }

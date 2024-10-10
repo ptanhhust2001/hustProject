@@ -1,12 +1,19 @@
 package com.document.Documentweb.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 import java.util.Set;
 
+@Entity
+@Table(name = "subject")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Subject {
     @Id
@@ -16,6 +23,6 @@ public class Subject {
     String name;
 
     @OneToMany
-    private Set<Post> posts;
+    private List<Post> posts;
 
 }

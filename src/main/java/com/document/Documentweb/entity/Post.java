@@ -1,11 +1,19 @@
 package com.document.Documentweb.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
+@Entity
+@Table(name = "post")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Post {
     @Id
@@ -18,16 +26,20 @@ public class Post {
     String author;
 
     @ManyToOne
-    @JoinColumn(name = "class_id")
-    ClassEntity aClass;
-
-    @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    @OneToMany
-    List<Comment> comments;
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    ClassEntity classEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
 
     @OneToMany
-    List<Material> materials;
+    Set<Comment> comments;
+
+    @OneToMany
+    Set<Material> materials;
 }

@@ -2,7 +2,7 @@ package com.document.Documentweb.configuration;
 
 import com.document.Documentweb.dto.introspect.IntrospectRequest;
 import com.document.Documentweb.dto.introspect.IntrospectResponse;
-import com.document.Documentweb.service.auth.AuthenticationService;
+import com.document.Documentweb.service.auth.IAuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -22,7 +22,7 @@ import java.util.Objects;
 public class CustomeJwtDecoder implements JwtDecoder {
     private String signerKey = "3QCHBCeWYk5Nvf23KERk8Z45Bv3BHH3HZALSLWKq+gukKZP9ksb9/rvIVIUqqdFN";
 
-    private final AuthenticationService authenticationService;
+    private final IAuthenticationService authenticationService;
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 
 

@@ -37,13 +37,14 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements IAuthenticationService {
     UserRepository userRepository;
     InValidateTokenRepository inValidateTokenRepository;
 
     @NonFinal
     protected static String SIGNER_KEY = "3QCHBCeWYk5Nvf23KERk8Z45Bv3BHH3HZALSLWKq+gukKZP9ksb9/rvIVIUqqdFN";
 
+    @Override
     public AuthenticationResDTO authenticated(AuthenticationReqDTO request) {
         var user = userRepository.findByUsername(request.getUserName()).orElseThrow(
                 () ->new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -60,6 +61,7 @@ public class AuthenticationService {
                 .build();
     }
 
+    @Override
     public IntrospectResponse introspect(IntrospectRequest request) throws ParseException, JOSEException {
         String token = request.getToken();
 /*        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
@@ -113,6 +115,7 @@ public class AuthenticationService {
 
     }
 
+    @Override
     public void logout(LogOutReqDTO request) throws ParseException, JOSEException {
         String token = request.getToken();
         SignedJWT signToken = verifyToken(token, true);
@@ -128,6 +131,7 @@ public class AuthenticationService {
 
     }
 
+    @Override
     public AuthenticationResDTO refreshToken(RefreshTokenReqDTO request) throws ParseException, JOSEException {
         //get token
         String token = request.getToken();
