@@ -25,6 +25,6 @@ public class ClassEntity {
     @ManyToMany
     List<Subject> subjects;
 
-    @OneToMany
+    @OneToMany(mappedBy = "classEntity")
     Set<Post> posts;
 }

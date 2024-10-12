@@ -31,6 +31,6 @@ public class User {
     @ManyToMany
     Set<Role> roles;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     Set<Post> posts;
 }

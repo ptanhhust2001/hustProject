@@ -37,9 +37,9 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     Set<Comment> comments;
 
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     Set<Material> materials;
 }
