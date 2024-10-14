@@ -1,4 +1,4 @@
-package com.document.Documentweb.service.Comment;
+package com.document.Documentweb.service.comment;
 
 public interface ICommentService {
 }
