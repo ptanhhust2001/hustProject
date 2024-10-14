@@ -10,8 +10,8 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 
-import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +58,12 @@ public class GlobalException {
                         .message(errorCode.getMessage())
                         .build());
     }
+    @ExceptionHandler(BookException.class)
+    public ResponseEntity<ResponseDTO<Object>> handleMccException(BookException exception,
+                                                                  WebRequest webRequest) {
+        return new ResponseEntity<>(ResponseDTO.fail(exception.getErrorCode(), exception.getErrorList()), HttpStatus.BAD_REQUEST);
+    }
+
 
 
 

@@ -22,7 +22,7 @@ public class Subject {
 
     String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "subject")
     private List<Post> posts;
 
 }

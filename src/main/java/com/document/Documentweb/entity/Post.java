@@ -1,5 +1,6 @@
 package com.document.Documentweb.entity;
 
+import com.document.Documentweb.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
