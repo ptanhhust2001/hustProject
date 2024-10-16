@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String name;
+    String title;
     String content;
     String description;
     String author;
@@ -43,4 +44,12 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     Set<Material> materials;
+
+    LocalDateTime createAt;
+
+    LocalDateTime updateAt;
+
+    String createBy;
+
+    String updateBy;
 }

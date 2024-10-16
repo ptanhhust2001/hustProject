@@ -1,10 +1,8 @@
 package com.document.Documentweb.dto.subject;
 
-import com.document.Documentweb.entity.Post;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,5 +15,5 @@ public class SubjectResDTO {
 
     String name;
 
-    List<Post> posts;
+//    List<Post> posts;
 }

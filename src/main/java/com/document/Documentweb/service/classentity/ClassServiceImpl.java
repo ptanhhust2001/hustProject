@@ -34,8 +34,8 @@ public class ClassServiceImpl implements IClassService{
 
         List<Subject> subjects = getAllSubjectByName(dto.getSubjects(), errorMap);
         
-        if (repository.findByName(dto.getName()).isEmpty()) errorMap.put(ErrorCommon.CLASS_ALREADY_EXISTS, List.of(data.getName()));
-        if (!errorMap.isEmpty()) throw new BookException(FunctionError.CREATE_FAL,errorMap);
+        if (repository.findByName(dto.getName()).isPresent()) errorMap.put(ErrorCommon.CLASS_ALREADY_EXISTS, List.of(data.getName()));
+        if (!errorMap.isEmpty()) throw new BookException(FunctionError.CREATE_FAILED,errorMap);
         data.setSubjects(subjects);
         repository.save(data);
 

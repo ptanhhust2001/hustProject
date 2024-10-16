@@ -27,11 +27,12 @@ public class SubjectServiceImpl implements ISubjectService{
 
 
     //FAILED
-
+    @Override
     public List<SubjectResDTO> findAll() {
         return repository.findAll().stream().map(subject -> mapper.map(subject, SubjectResDTO.class)).toList();
     }
 
+    @Override
     public SubjectResDTO findById(Long id) {
         Subject data = repository.findById(id)
                 .orElseThrow(()
@@ -39,13 +40,15 @@ public class SubjectServiceImpl implements ISubjectService{
         return mapper.map(data, SubjectResDTO.class);
     }
 
+    @Override
     public SubjectResDTO create(SubjectReqDTO dto) {
         Subject data = mapper.map(dto, Subject.class);
-        if (repository.findByName(dto.getName()).isEmpty()) throw new BookException(FunctionError.CREATE_FAL, ErrorCommon.SUBJECT_EXISTED);
+        if (repository.findByName(dto.getName()).isPresent()) throw new BookException(FunctionError.CREATE_FAILED, ErrorCommon.SUBJECT_EXISTED);
         repository.save(data);
         return mapper.map(repository.save(data), SubjectResDTO.class);
     }
 
+    @Override
     public SubjectResDTO update(Long id, SubjectReqDTO dto) {
         Subject data = repository.findById(id)
                 .orElseThrow(()

@@ -5,9 +5,15 @@ import com.document.Documentweb.constrant.FunctionError;
 import com.document.Documentweb.dto.ResponsePageDTO;
 import com.document.Documentweb.dto.post.PostReqDTO;
 import com.document.Documentweb.dto.post.PostResDTO;
+import com.document.Documentweb.entity.ClassEntity;
 import com.document.Documentweb.entity.Post;
+import com.document.Documentweb.entity.Subject;
+import com.document.Documentweb.entity.User;
 import com.document.Documentweb.exception.BookException;
+import com.document.Documentweb.repository.ClassEntityRepository;
 import com.document.Documentweb.repository.PostRepository;
+import com.document.Documentweb.repository.SubjectRepository;
+import com.document.Documentweb.repository.UserRepository;
 import com.document.Documentweb.utils.spec.BaseSpecs;
 import com.document.Documentweb.utils.spec.Utils;
 import lombok.AccessLevel;
@@ -22,8 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
 
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -31,19 +37,25 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostServiceImpl implements IPostService{
     PostRepository repository;
+    SubjectRepository subjectRepository;
+    ClassEntityRepository classRepository;
+    UserRepository userRepository;
     ModelMapper mapper;
 
+
+    @Override
     public List<PostResDTO> findAll() {
         return repository.findAll().stream().map(post -> mapper.map(post, PostResDTO.class)).toList();
     }
 
     public ResponsePageDTO<List<PostResDTO>> findAllByPage(String advanceSearch, Pageable pageable) {
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("updateDate").descending());
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("updateAt").descending());
         Page<Post> page = repository.findAll(BaseSpecs.searchQuery(advanceSearch), pageable);
         List<PostResDTO> dtos = Utils.mapList(mapper, page.getContent(), PostResDTO.class);
         return ResponsePageDTO.success(dtos, page.getTotalElements());
     }
 
+    @Override
     public PostResDTO findById(Long id) {
         Post data = repository.findById(id)
                 .orElseThrow(()
@@ -51,18 +63,35 @@ public class PostServiceImpl implements IPostService{
         return mapper.map(data, PostResDTO.class);
     }
 
+    @Override
     public PostResDTO create(PostReqDTO dto) {
         Post data = mapper.map(dto, Post.class);
-        repository.save(data);
+        Map<Object,Object> errorsMap = new HashMap<>();
+        Optional<ClassEntity> classOpt = classRepository.findById(dto.getClassEntityId());
+        Optional<Subject> subjectOpt = subjectRepository.findById(dto.getSubjectId());
+        Optional<User> userOpt = userRepository.findByUsername(Utils.getCurrentUser());
+
+        if (classOpt.isEmpty()) errorsMap.put(ErrorCommon.CLASS_DOES_NOT_EXIST, List.of(dto.getClassEntityId()));
+        if (subjectOpt.isEmpty()) errorsMap.put(ErrorCommon.SUBJECT_DOES_NOT_EXIST, List.of(dto.getSubjectId()));
+        if (userOpt.isEmpty()) errorsMap.put(ErrorCommon.USER_DOES_NOT_EXIST, List.of(Utils.getCurrentUser()));
+
+        if (!errorsMap.isEmpty()) throw new BookException(FunctionError.CREATE_FAILED, errorsMap);
+
+        data.setClassEntity(classOpt.get());
+        data.setSubject(subjectOpt.get());
+        data.setUser(userOpt.get());
+        data.setAuthor(userOpt.get().getLastName());
+
+        save(data, true);
         return mapper.map(data, PostResDTO.class);
     }
 
-
+    @Override
     public PostResDTO update(Long id, PostReqDTO dto) {
         if (repository.findById(id).isEmpty()) throw new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.POST_NOT_FOUND, List.of(id)));
         Post data = mapper.map(dto, Post.class);
         data.setId(id);
-        repository.save(data);
+        save(data, false);
         return mapper.map(data, PostResDTO.class);
     }
 
@@ -71,5 +100,15 @@ public class PostServiceImpl implements IPostService{
         if (!notFound.isEmpty())
             throw new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.POST_NOT_FOUND, notFound));
         repository.deleteAllByIdInBatch(ids);
+    }
+
+    private void save(Post data,boolean isCreate) {
+        if (isCreate) {
+            data.setCreateAt(LocalDateTime.now());
+            data.setCreateBy(Utils.getCurrentUser());
+        }
+        data.setUpdateAt(LocalDateTime.now());
+        data.setUpdateBy(Utils.getCurrentUser());
+        repository.save(data);
     }
 }

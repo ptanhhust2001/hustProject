@@ -1,11 +1,19 @@
 package com.document.Documentweb.dto.post;
 
-import com.document.Documentweb.entity.Subject;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostReqDTO {
-    String name;
+    String title;
     String content;
     String description;
-    String author;
-    private Subject subject;
+    Long subjectId;
+    Long classEntityId;
 }

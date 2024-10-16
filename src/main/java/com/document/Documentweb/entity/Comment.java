@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "comment")
 @Getter
@@ -24,4 +26,11 @@ public class Comment {
     @JoinColumn(name = "post_id")
     Post post;
 
+    LocalDateTime createAt;
+
+    LocalDateTime updateAt;
+
+    String createBy;
+
+    String updateBy;
 }

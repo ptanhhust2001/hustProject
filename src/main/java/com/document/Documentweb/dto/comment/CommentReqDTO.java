@@ -1,8 +1,16 @@
 package com.document.Documentweb.dto.comment;
 
-import com.document.Documentweb.entity.Post;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentReqDTO {
 
     String content;
