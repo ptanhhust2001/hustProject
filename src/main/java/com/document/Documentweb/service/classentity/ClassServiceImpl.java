@@ -25,11 +25,11 @@ import java.util.*;
 public class ClassServiceImpl implements IClassService{
     ClassEntityRepository repository;
     SubjectRepository subjectRepository;
-    ModelMapper mapper;
+    ModelMapper classMapper;
 
     @Override
     public ClassResDTO create(ClassReqDTO dto) {
-        ClassEntity data = mapper.map(dto, ClassEntity.class);
+        ClassEntity data = classMapper.map(dto, ClassEntity.class);
         Map<Object, Object> errorMap = new HashMap<>();
 
         List<Subject> subjects = getAllSubjectByName(dto.getSubjects(), errorMap);
@@ -39,14 +39,14 @@ public class ClassServiceImpl implements IClassService{
         data.setSubjects(subjects);
         repository.save(data);
 
-        return mapper.map(data, ClassResDTO.class);
+        return classMapper.map(data, ClassResDTO.class);
     }
 
     @Override
     public List<ClassResDTO> findAll(){
         return repository.findAll()
                 .stream()
-                .map(data -> mapper.map(data, ClassResDTO.class))
+                .map(data -> classMapper.map(data, ClassResDTO.class))
                 .toList();
     }
 
@@ -54,7 +54,7 @@ public class ClassServiceImpl implements IClassService{
     public ClassResDTO findById(Long id) {
         Optional<ClassEntity> data = repository.findById(id);
         if (data.isEmpty()) throw new BookException(FunctionError.NOT_FOUND, List.of(id));
-        return mapper.map(data.get(), ClassResDTO.class);
+        return classMapper.map(data.get(), ClassResDTO.class);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ClassServiceImpl implements IClassService{
         Optional<ClassEntity> data = repository.findById(id);
         if (data.isEmpty()) throw new BookException(FunctionError.NOT_FOUND, List.of(id));
 
-        ClassEntity updateData = mapper.map(dto, ClassEntity.class);
+        ClassEntity updateData = classMapper.map(dto, ClassEntity.class);
         updateData.setId(id);
         Map<Object, Object> errorMap = new HashMap<>();
 
@@ -70,7 +70,7 @@ public class ClassServiceImpl implements IClassService{
         if (!errorMap.isEmpty()) throw new BookException(FunctionError.UPDATE_FAL, errorMap);
         updateData.setSubjects(subjects);
         repository.save(updateData);
-        return mapper.map(updateData, ClassResDTO.class);
+        return classMapper.map(updateData, ClassResDTO.class);
     }
 
     @Override
