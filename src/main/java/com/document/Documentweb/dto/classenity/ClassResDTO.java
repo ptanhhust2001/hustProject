@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -20,9 +18,4 @@ public class ClassResDTO {
     Long id;
 
     String name;
-
-    List<Subject> subjects;
-
-    Set<Post> posts;
-
 }

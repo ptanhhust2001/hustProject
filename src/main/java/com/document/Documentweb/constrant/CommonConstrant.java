@@ -1,6 +1,8 @@
 package com.document.Documentweb.constrant;
 
 public class CommonConstrant {
+    public static final String DEFAULT_AVATAR = "uploads/avatars/default.jpg";
+
     public static final String NEW_OPERATOR = "＆（）｜＝＞＜～［］！，≠≁";
 
     // ＆（）｜＝＞＜～［］！

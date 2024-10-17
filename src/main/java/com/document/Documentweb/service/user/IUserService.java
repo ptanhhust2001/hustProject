@@ -23,4 +23,8 @@ public interface IUserService {
     void deleteUser(Long userId);
 
     UserResDTO updateUser(long id, UserUpdateDTO dto);
+
+    void uploadAvatar(Long id, String url);
+
+    String getAvatarUrl(Long id);
 }

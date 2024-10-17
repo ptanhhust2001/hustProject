@@ -40,18 +40,18 @@ public class PostServiceImpl implements IPostService{
     SubjectRepository subjectRepository;
     ClassEntityRepository classRepository;
     UserRepository userRepository;
-    ModelMapper mapper;
+    ModelMapper postMapper;
 
 
     @Override
     public List<PostResDTO> findAll() {
-        return repository.findAll().stream().map(post -> mapper.map(post, PostResDTO.class)).toList();
+        return repository.findAll().stream().map(post -> postMapper.map(post, PostResDTO.class)).toList();
     }
 
     public ResponsePageDTO<List<PostResDTO>> findAllByPage(String advanceSearch, Pageable pageable) {
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("updateAt").descending());
         Page<Post> page = repository.findAll(BaseSpecs.searchQuery(advanceSearch), pageable);
-        List<PostResDTO> dtos = Utils.mapList(mapper, page.getContent(), PostResDTO.class);
+        List<PostResDTO> dtos = Utils.mapList(postMapper, page.getContent(), PostResDTO.class);
         return ResponsePageDTO.success(dtos, page.getTotalElements());
     }
 
@@ -60,12 +60,12 @@ public class PostServiceImpl implements IPostService{
         Post data = repository.findById(id)
                 .orElseThrow(()
                         -> new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.POST_NOT_FOUND, List.of(id))));
-        return mapper.map(data, PostResDTO.class);
+        return postMapper.map(data, PostResDTO.class);
     }
 
     @Override
     public PostResDTO create(PostReqDTO dto) {
-        Post data = mapper.map(dto, Post.class);
+        Post data = postMapper.map(dto, Post.class);
         Map<Object,Object> errorsMap = new HashMap<>();
         Optional<ClassEntity> classOpt = classRepository.findById(dto.getClassEntityId());
         Optional<Subject> subjectOpt = subjectRepository.findById(dto.getSubjectId());
@@ -83,16 +83,18 @@ public class PostServiceImpl implements IPostService{
         data.setAuthor(userOpt.get().getLastName());
 
         save(data, true);
-        return mapper.map(data, PostResDTO.class);
+        return postMapper.map(data, PostResDTO.class);
     }
 
     @Override
     public PostResDTO update(Long id, PostReqDTO dto) {
-        if (repository.findById(id).isEmpty()) throw new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.POST_NOT_FOUND, List.of(id)));
-        Post data = mapper.map(dto, Post.class);
-        data.setId(id);
+        Optional<Post> dataOpt = repository.findById(id);
+        if (dataOpt.isEmpty()) throw new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.POST_NOT_FOUND, List.of(id)));
+        Post data = dataOpt.get();
+        data = postMapper.map(dto, Post.class);
+
         save(data, false);
-        return mapper.map(data, PostResDTO.class);
+        return postMapper.map(data, PostResDTO.class);
     }
 
     public void deleteAllById(List<Long> ids) {

@@ -15,5 +15,4 @@ public class SubjectResDTO {
 
     String name;
 
-//    List<Post> posts;
 }

@@ -28,10 +28,6 @@ public class PostResDTO {
 
     Long userId;
 
-    Set<Comment> comments;
-
-    Set<Material> materials;
-
     LocalDateTime createAt;
 
     LocalDateTime updateAt;

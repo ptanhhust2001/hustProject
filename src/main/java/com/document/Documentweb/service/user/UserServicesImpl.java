@@ -1,5 +1,6 @@
 package com.document.Documentweb.service.user;
 
+import com.document.Documentweb.constrant.CommonConstrant;
 import com.document.Documentweb.constrant.enums.Role;
 import com.document.Documentweb.dto.User.UserReqDTO;
 import com.document.Documentweb.dto.User.UserResDTO;
@@ -83,5 +84,18 @@ public class UserServicesImpl implements IUserService{
         user.setRoles(new HashSet<>(roleService.getAllById(dto.getRoles())));
         userRepository.save(user);
         return mapper.map(user, UserResDTO.class);
+    }
+
+    @Override
+    public void uploadAvatar(Long id, String url) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setAvatarUrl(url);
+        userRepository.save(user);
+    }
+
+    @Override
+    public String getAvatarUrl(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return user.getAvatarUrl() == null ? CommonConstrant.DEFAULT_AVATAR : user.getAvatarUrl();
     }
 }

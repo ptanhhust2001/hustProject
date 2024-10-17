@@ -13,6 +13,10 @@ spring:
     password: 123456
 
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
 
 jwt:
   signerKey: "3QCHBCeWYk5Nvf23KERk8Z45Bv3BHH3HZALSLWKq+gukKZP9ksb9/rvIVIUqqdFN"
@@ -27,3 +31,6 @@ springdoc:
     csrf.enabled: true
     operationsSorter: method
     tags-sorter: alpha
+
+avatar:
+  upload-dir: uploads/avatars
