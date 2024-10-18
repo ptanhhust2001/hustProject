@@ -35,4 +35,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     Set<Post> posts;
+
+    @OneToMany(mappedBy = "user")
+    Set<Exam> exams;
 }

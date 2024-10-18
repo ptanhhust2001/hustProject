@@ -59,18 +59,16 @@ public class ClassServiceImpl implements IClassService{
 
     @Override
     public ClassResDTO update(Long id, ClassReqDTO dto) {
-        Optional<ClassEntity> data = repository.findById(id);
-        if (data.isEmpty()) throw new BookException(FunctionError.NOT_FOUND, List.of(id));
+        ClassEntity data = repository.findById(id).orElseThrow(() -> new BookException(FunctionError.NOT_FOUND, List.of(id)));
 
-        ClassEntity updateData = classMapper.map(dto, ClassEntity.class);
-        updateData.setId(id);
+        classMapper.map(dto, data);
         Map<Object, Object> errorMap = new HashMap<>();
 
         List<Subject> subjects = getAllSubjectByName(dto.getSubjects(), errorMap);
         if (!errorMap.isEmpty()) throw new BookException(FunctionError.UPDATE_FAL, errorMap);
-        updateData.setSubjects(subjects);
-        repository.save(updateData);
-        return classMapper.map(updateData, ClassResDTO.class);
+        data.setSubjects(subjects);
+        repository.save(data);
+        return classMapper.map(data, ClassResDTO.class);
     }
 
     @Override

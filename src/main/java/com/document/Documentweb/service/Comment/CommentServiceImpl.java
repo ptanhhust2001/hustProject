@@ -5,6 +5,7 @@ import com.document.Documentweb.constrant.FunctionError;
 import com.document.Documentweb.dto.ResponsePageDTO;
 import com.document.Documentweb.dto.comment.CommentReqDTO;
 import com.document.Documentweb.dto.comment.CommentResDTO;
+import com.document.Documentweb.dto.comment.CommentUpdateDTO;
 import com.document.Documentweb.entity.Comment;
 import com.document.Documentweb.entity.Post;
 import com.document.Documentweb.exception.BookException;
@@ -35,13 +36,13 @@ import java.util.Optional;
 public class CommentServiceImpl implements ICommentService {
     CommentRepository repository;
     PostRepository postRepository;
-    ModelMapper mapper;
+    ModelMapper commentMapper;
 
     @Override
     public ResponsePageDTO<List<CommentResDTO>> findAll(String advanceSearch, Pageable pageable) {
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("updateAt").descending());
         Page<Comment> page = repository.findAll(BaseSpecs.searchQuery(advanceSearch), pageable);
-        List<CommentResDTO> dtoList = Utils.mapList(mapper, page.getContent()  ,CommentResDTO.class);
+        List<CommentResDTO> dtoList = Utils.mapList(commentMapper, page.getContent()  ,CommentResDTO.class);
         return ResponsePageDTO.success(dtoList, page.getTotalElements());
     }
 
@@ -49,31 +50,27 @@ public class CommentServiceImpl implements ICommentService {
     public CommentResDTO findById(Long id) {
         Comment data = repository.findById(id).orElseThrow(()
                 -> new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.COMMENT_NOT_FOUND, List.of(id))));
-        return mapper.map(data, CommentResDTO.class);
+        return commentMapper.map(data, CommentResDTO.class);
     }
 
     @Override
     public CommentResDTO create(CommentReqDTO dto) {
-        Comment data = mapper.map(dto, Comment.class);
+        Comment data = commentMapper.map(dto, Comment.class);
         //thieu
         Optional<Post> postOpt = postRepository.findById(dto.getPostId());
         if (postOpt.isEmpty()) throw new BookException(FunctionError.CREATE_FAILED, Map.of(ErrorCommon.POST_DOES_NOT_EXIST, dto.getPostId()));
         data.setPost(postOpt.get());
         save(data, true);
-        return mapper.map(repository.save(data), CommentResDTO.class);
+        return commentMapper.map(repository.save(data), CommentResDTO.class);
     }
 
     @Override
-    public CommentResDTO update(Long id, CommentReqDTO dto) {
+    public CommentResDTO update(Long id, CommentUpdateDTO dto) {
         Comment data = repository.findById(id).orElseThrow(()
                 -> new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.COMMENT_NOT_FOUND, List.of(id))));
-        data = mapper.map(dto, Comment.class);
-        Optional<Post> postOpt = postRepository.findById(dto.getPostId());
-        if (postOpt.isEmpty()) throw new BookException(FunctionError.CREATE_FAILED, Map.of(ErrorCommon.POST_DOES_NOT_EXIST, dto.getPostId()));
-        data.setPost(postOpt.get());
-
+        commentMapper.map(dto, data);
         save(data, false);
-        return mapper.map(data, CommentResDTO.class);
+        return commentMapper.map(data, CommentResDTO.class);
     }
 
     @Override

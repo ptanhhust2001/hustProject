@@ -4,30 +4,28 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-import java.util.Set;
-
 @Entity
-@Table(name = "class")
+@Table(name = "question")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ClassEntity {
+public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String name;
+    String question;
+    String firstAnswer;
+    String secondAnswer;
+    String thirdAnswer;
+    String fourthAnswer;
+    String correctAnswer;
 
-    @ManyToMany
-    List<Subject> subjects;
 
-    @OneToMany(mappedBy = "classEntity")
-    Set<Post> posts;
-
-    @OneToMany(mappedBy = "classEntity")
-    Set<Exam> exams;
+    @ManyToOne
+    @JoinColumn(name = "exam_id")
+    Exam exam;
 }

@@ -28,7 +28,7 @@ import java.util.Set;
 @Service
 public class UserServicesImpl implements IUserService{
     private final UserRepository userRepository;
-    private final ModelMapper mapper;
+    private final ModelMapper userMapper;
     private final RoleServiceImpl roleService;
 
     @Override
@@ -36,7 +36,7 @@ public class UserServicesImpl implements IUserService{
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        User user = mapper.map(dto,User.class);
+        User user = userMapper.map(dto,User.class);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
@@ -45,20 +45,20 @@ public class UserServicesImpl implements IUserService{
 //`        user.setRoles(roles);`
 
         user = userRepository.save(user);
-        return mapper.map(user, UserResDTO.class);
+        return userMapper.map(user, UserResDTO.class);
     }
 
     @PreAuthorize("hasAuthority('READ_DATA')")
     @Override
     public List<UserResDTO> getUsers() {
-        return userRepository.findAll().stream().map(user -> mapper.map(user, UserResDTO.class)).toList();
+        return userRepository.findAll().stream().map(user -> userMapper.map(user, UserResDTO.class)).toList();
     }
 
     @PostAuthorize("returnObject.username == authentication.name || hasRole('ADMIN')")
     @Override
     public UserResDTO getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        return mapper.map(user, UserResDTO.class);
+        return userMapper.map(user, UserResDTO.class);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class UserServicesImpl implements IUserService{
         SecurityContext context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        return mapper.map(user, UserResDTO.class);
+        return userMapper.map(user, UserResDTO.class);
     }
 
     @Override
@@ -77,13 +77,12 @@ public class UserServicesImpl implements IUserService{
     @Override
     public UserResDTO updateUser(long id, UserUpdateDTO dto) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-            user = mapper.map(dto, User.class);
+        userMapper.map(dto, user);
         user.setId(id);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setRoles(new HashSet<>(roleService.getAllById(dto.getRoles())));
         userRepository.save(user);
-        return mapper.map(user, UserResDTO.class);
+        return userMapper.map(user, UserResDTO.class);
     }
 
     @Override

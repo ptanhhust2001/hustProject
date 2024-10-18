@@ -5,6 +5,7 @@ import com.document.Documentweb.constrant.FunctionError;
 import com.document.Documentweb.dto.ResponsePageDTO;
 import com.document.Documentweb.dto.post.PostReqDTO;
 import com.document.Documentweb.dto.post.PostResDTO;
+import com.document.Documentweb.dto.post.PostUpdateDTO;
 import com.document.Documentweb.entity.ClassEntity;
 import com.document.Documentweb.entity.Post;
 import com.document.Documentweb.entity.Subject;
@@ -87,11 +88,9 @@ public class PostServiceImpl implements IPostService{
     }
 
     @Override
-    public PostResDTO update(Long id, PostReqDTO dto) {
-        Optional<Post> dataOpt = repository.findById(id);
-        if (dataOpt.isEmpty()) throw new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.POST_NOT_FOUND, List.of(id)));
-        Post data = dataOpt.get();
-        data = postMapper.map(dto, Post.class);
+    public PostResDTO update(Long id, PostUpdateDTO dto) {
+        Post data = repository.findById(id).orElseThrow(() ->new BookException(FunctionError.NOT_FOUND, Map.of(ErrorCommon.POST_NOT_FOUND, List.of(id))));
+        postMapper.map(dto, data);
 
         save(data, false);
         return postMapper.map(data, PostResDTO.class);

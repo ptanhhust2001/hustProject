@@ -25,6 +25,7 @@ public class ClassConfigMapper {
             @Override
             protected void configure() {
                 skip(destination.getId());
+                skip(destination.getSubjects());
             }
         };
         mapper.addMappings(map1);

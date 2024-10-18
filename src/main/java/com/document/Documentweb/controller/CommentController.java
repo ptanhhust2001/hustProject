@@ -4,6 +4,7 @@ import com.document.Documentweb.dto.ResponseDTO;
 import com.document.Documentweb.dto.ResponsePageDTO;
 import com.document.Documentweb.dto.comment.CommentReqDTO;
 import com.document.Documentweb.dto.comment.CommentResDTO;
+import com.document.Documentweb.dto.comment.CommentUpdateDTO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -41,7 +42,7 @@ public class CommentController {
     }
 
     @PutMapping
-    public ResponseEntity<ResponseDTO<CommentResDTO>> update(@PathVariable Long id,@RequestBody CommentReqDTO dto) {
+    public ResponseEntity<ResponseDTO<CommentResDTO>> update(@PathVariable Long id,@RequestBody CommentUpdateDTO dto) {
         return ResponseEntity.ok(ResponseDTO.success(service.update(id, dto)));
     }
 
