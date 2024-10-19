@@ -76,7 +76,7 @@ public class ClassServiceImpl implements IClassService{
         Map<Object, Object> errorMap = new HashMap<>();
         List<Long> notFound = ids.stream().filter(id -> repository.findById(id).isEmpty()).toList();
         if (!notFound.isEmpty()) errorMap.put(ErrorCommon.CLASS_NOT_FOUND, notFound);
-        if (!errorMap.isEmpty()) throw new BookException(FunctionError.DELETE_FAL, errorMap);
+        if (!errorMap.isEmpty()) throw new BookException(FunctionError.DELETE_FAILSE, errorMap);
 
         repository.deleteAllById(ids);
     }

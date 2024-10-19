@@ -17,27 +17,27 @@ public class ClassController {
     IClassService service;
 
     @GetMapping
-    public ResponseEntity<ResponseDTO<List<ClassResDTO>>> getAllClasses() {
+    public ResponseEntity<ResponseDTO<List<ClassResDTO>>> getAll() {
         return ResponseEntity.ok(ResponseDTO.success(service.findAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<ClassResDTO>> getClassById(@PathVariable Long id) {
+    public ResponseEntity<ResponseDTO<ClassResDTO>> getById(@PathVariable Long id) {
         return ResponseEntity.ok(ResponseDTO.success(service.findById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDTO<ClassResDTO>> createClass(@RequestBody ClassReqDTO dto) {
+    public ResponseEntity<ResponseDTO<ClassResDTO>> create(@RequestBody ClassReqDTO dto) {
         return ResponseEntity.ok(ResponseDTO.success(service.create(dto)));
     }
 
     @PutMapping
-    public ResponseEntity<ResponseDTO<ClassResDTO>> updateClass(@PathVariable Long id,@RequestBody ClassReqDTO dto) {
+    public ResponseEntity<ResponseDTO<ClassResDTO>> update(@PathVariable Long id,@RequestBody ClassReqDTO dto) {
         return ResponseEntity.ok(ResponseDTO.success(service.update(id ,dto)));
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteAll(@RequestParam List<Long> ids) {
+    public ResponseEntity<Void> deleteAllById(@RequestParam List<Long> ids) {
         service.deleteAllByIds(ids);
         return ResponseEntity.ok().build();
     }
