@@ -3,6 +3,7 @@ package com.document.Documentweb.service.exam;
 import com.document.Documentweb.dto.exam.ExamReqDTO;
 import com.document.Documentweb.dto.exam.ExamResDTO;
 import com.document.Documentweb.dto.exam.ExamUpdateDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface IExamService {
     ExamResDTO update(Long id, ExamUpdateDTO dto);
 
     void deleteAllById(List<Long> ids);
+
+    void upload(MultipartFile file, ExamReqDTO dto);
 }

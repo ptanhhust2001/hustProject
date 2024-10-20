@@ -83,8 +83,8 @@ public class UserController {
         return ResponseDTO.success(services.createUser(user));
     }
 
-    @PostMapping(value = "/avatar")
-    public ResponseEntity<?> uploadAvatar(@RequestParam("file") MultipartFile file, @RequestParam Long id) {
+    @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadAvatar(@RequestPart("file") MultipartFile file, @RequestParam Long id) {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
         }
@@ -96,7 +96,7 @@ public class UserController {
             Files.copy(file.getInputStream(), filePath);
             String pathAvatar = uploadDir + fileName;
             services.uploadAvatar(id, pathAvatar);
-            String fileUrl = "/api/avatars/view/" + fileName;
+//            String fileUrl = "/api/avatars/view/" + fileName;
 
             return ResponseEntity.ok().body(ResponseDTO.success("File uploaded successfully"));
         } catch (IOException e) {

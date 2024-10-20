@@ -4,13 +4,16 @@ import com.document.Documentweb.dto.ResponseDTO;
 import com.document.Documentweb.dto.exam.ExamReqDTO;
 import com.document.Documentweb.dto.exam.ExamResDTO;
 import com.document.Documentweb.dto.exam.ExamUpdateDTO;
+import com.document.Documentweb.dto.question.QuestionReqDTO;
 import com.document.Documentweb.service.exam.IExamService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -34,6 +37,12 @@ public class ExamController {
     @PostMapping
     public ResponseEntity<ResponseDTO<ExamResDTO>> create(@RequestBody @Valid ExamReqDTO dto) {
         return ResponseEntity.ok(ResponseDTO.success(service.create(dto)));
+    }
+
+    @PostMapping(value = "/questions")
+    public ResponseEntity<?> createExam(@ModelAttribute MultipartFile file, @RequestBody @Valid ExamReqDTO dto) {
+        service.upload(file, dto);
+        return ResponseEntity.ok(ResponseDTO.success());
     }
 
     @PutMapping
