@@ -7,16 +7,14 @@ import com.document.Documentweb.dto.exam.ExamResDTO;
 import com.document.Documentweb.dto.exam.ExamUpdateDTO;
 import com.document.Documentweb.entity.*;
 import com.document.Documentweb.exception.BookException;
-import com.document.Documentweb.repository.ClassEntityRepository;
-import com.document.Documentweb.repository.ExamRepository;
-import com.document.Documentweb.repository.SubjectRepository;
-import com.document.Documentweb.repository.UserRepository;
+import com.document.Documentweb.repository.*;
 import com.document.Documentweb.utils.spec.BaseSpecs;
 import com.document.Documentweb.utils.spec.Utils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+//import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -37,6 +35,7 @@ public class ExamServiceImpl implements IExamService{
     ClassEntityRepository classEntityRepository;
     UserRepository userRepository;
     SubjectRepository subjectRepository;
+    QuestionRepository questionRepository;
 
     @Override
     public List<ExamResDTO> findAll(String advanceSearch) {
@@ -78,91 +77,110 @@ public class ExamServiceImpl implements IExamService{
         repository.deleteAllById(ids);
     }
 
-    private void save(Exam data, boolean isCreate) {
+    private Exam save(Exam data, boolean isCreate) {
         if (isCreate) {
             data.setCreateBy(Utils.getCurrentUser());
             data.setCreateAt(LocalDateTime.now());
         }
         data.setUpdateBy(Utils.getCurrentUser());
         data.setUpdateAt(LocalDateTime.now());
-        repository.save(data);
+        return repository.save(data);
     }
 
     @Override
-    public void upload(MultipartFile file, ExamReqDTO dto) {
-        Map<Object, Object> errorMap = new HashMap<>();
-        Exam data = validation(dto, errorMap);
-        List<List<String>> listQuestions = new ArrayList<>();
+    public void upload(MultipartFile file, Long classId, Long subjectId) throws IOException {
+        Queue<List<String>> questionList = readQuestion(file);
+        Exam data = new Exam();
+        Map<Object, Object> errorMap = new HashMap<Object, Object>();
+        String name = "";
+        if (!questionList.peek().isEmpty()) {
+            name = questionList.poll().get(0);
+        }
+        if (name == null) errorMap.put(ErrorCommon.TITLE_NOT_NULL,List.of(""));
+        Optional<ClassEntity> classEntity = classEntityRepository.findById(classId);
+        Optional<Subject> subject = subjectRepository.findById(subjectId);
+        if (classEntity.isEmpty()) errorMap.put(ErrorCommon.CLASS_DOES_NOT_EXIST, List.of(classId));
+        if (subject.isEmpty()) errorMap.put(ErrorCommon.SUBJECT_DOES_NOT_EXIST, List.of(subjectId));
+        if (!errorMap.isEmpty()) throw new BookException(FunctionError.CREATE_FAILED, errorMap);
+        data.setName(name);
+        data.setClassEntity(classEntity.get());
+        data.setSubject(subject.get());
+        data.setUser(userRepository.findByUsername(Utils.getCurrentUser()).get());
+
+        List<Question> questions = readData(questionList);
+
+        data = save(data, true);
+        for (Question question : questions) {
+            question.setExam(data);
+        }
+        questionRepository.saveAll(questions);
+    }
+
+    private List<Question> readData(Queue<List<String>> queue) {
+        List<Question> listQuestion = new ArrayList<Question>();
+        while (!queue.isEmpty()) {
+            List<String> data = queue.poll();
+            if (data.size() >= 4) {
+              Question question = new Question();
+              question.setQuestion(data.get(0));
+              if (data.get(1).charAt(0) == '*') {
+                  question.setCorrectAnswer("A");
+                  question.setFirstAnswer(data.get(1).substring(1));
+              } else {
+                  question.setFirstAnswer(data.get(1));
+              }
+              if (data.get(2).charAt(0) == '*') {
+                  question.setCorrectAnswer("B");
+                  question.setSecondAnswer(data.get(2).substring(1));
+              } else {
+                  question.setSecondAnswer(data.get(2));
+              }
+              if (data.get(3).charAt(0) == '*') {
+                  question.setCorrectAnswer("C");
+                  question.setThirdAnswer(data.get(3).substring(1));
+              } else {
+                  question.setThirdAnswer(data.get(3));
+              }
+              if (data.size() >= 5 && data.get(4).charAt(0) == '*') {
+                  question.setCorrectAnswer("D");
+                  question.setFourthAnswer(data.get(4).substring(1));
+              } else {
+                  question.setFourthAnswer(data.get(4));
+              }
+              if (question.getCorrectAnswer() != null) {
+                listQuestion.add(question);
+              }
+            }
+        }
+        return listQuestion;
+    }
+
+    private Queue<List<String>> readQuestion(MultipartFile file) {
         if (!file.getOriginalFilename().endsWith(".docx")) {
-            throw new BookException("FILE_INCORRECT");
+            throw new BookException(FunctionError.UPLOAD_FAILED, ErrorCommon.FILE_INVALID_FORMAT);
         }
 
         // Đọc nội dung file Word
         try (InputStream inputStream = file.getInputStream()) {
             XWPFDocument document = new XWPFDocument(inputStream);
-            StringBuilder content = new StringBuilder();
 
-            List<String> queue = new ArrayList<>();
-
+            Queue<List<String>> questionList = new ArrayDeque<>();
+            List<String> question = new ArrayList<>();
             document.getParagraphs().forEach(paragraph -> {
                 if (paragraph.getText().isBlank()) {
-                    List<String> temp = new ArrayList<>(queue);
-                    listQuestions.add(temp);
-                    queue.clear();
+                    questionList.add(new ArrayList<>(question));
+                    question.clear();
+                } else {
+                    question.add(paragraph.getText());
                 }
-                queue.add(paragraph.getText());
-
-                content.append(paragraph.getText()).append("\n");
             });
-
+            questionList.add(new ArrayList<>(question));
+            return questionList;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        List<Question> questions  = new ArrayList<>();
-        listQuestions.forEach(question -> {
-            if (!question.isEmpty() && question.size() >= 4) {
-                Question dataQuestion = Question.builder()
-                        .question(question.get(0))
-                        .firstAnswer(question.get(1))
-                        .secondAnswer(question.get(2))
-                        .thirdAnswer(question.get(3))
-                        .fourthAnswer(question.get(4) == null ? null : question.get(4))
-                        .build();
-                int correctAns = 0;
-                boolean isCorrect = false;
-                for (String i : question) {
-                    if (i.charAt(0) == '*') {
-                        correctAns ++;
-                        isCorrect = true;
-                        break;
-                    } else {
-                        correctAns += 1;
-                    }
-                }
-                if (isCorrect) errorMap.computeIfAbsent(ErrorCommon.QUESTION_DOES_NOT_ANSWER, k -> new ArrayList<>().add(question.get(0)));
-                switch (correctAns) {
-                    case 1 :
-                        dataQuestion.setCorrectAnswer("A");
-                        break;
-                    case 2 :
-                        dataQuestion.setCorrectAnswer("B");
-                        break;
-                    case 3 :
-                        dataQuestion.setCorrectAnswer("C");
-                        break;
-                    case 4 :
-                        dataQuestion.setCorrectAnswer("D");
-                        break;
-                    default:
-                        break;
-                }
-                questions.add(dataQuestion);
-            }
-        });
-
-        data.setQuestions(questions);
-        save(data, true);
     }
+
 
     private Exam validation(ExamReqDTO dto, Map<Object, Object> errorMap) {
         Exam data = examMapper.map(dto, Exam.class);

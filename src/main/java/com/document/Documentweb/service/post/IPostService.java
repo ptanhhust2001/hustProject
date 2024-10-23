@@ -13,7 +13,6 @@ public interface IPostService {
 
     PostResDTO create(PostReqDTO dto);
 
-
     PostResDTO update(Long id, PostUpdateDTO dto);
 
     void deleteAllById(List<Long> ids);

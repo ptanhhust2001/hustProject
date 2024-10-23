@@ -5,6 +5,7 @@ import com.document.Documentweb.dto.exam.ExamResDTO;
 import com.document.Documentweb.dto.exam.ExamUpdateDTO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IExamService {
@@ -18,5 +19,5 @@ public interface IExamService {
 
     void deleteAllById(List<Long> ids);
 
-    void upload(MultipartFile file, ExamReqDTO dto);
+    void upload(MultipartFile file , Long classId, Long subjectId) throws IOException;
 }
