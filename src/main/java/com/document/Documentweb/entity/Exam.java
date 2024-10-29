@@ -22,7 +22,7 @@ public class Exam {
 
     String name;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "exam")
     List<Question> questions;
 
     @ManyToOne

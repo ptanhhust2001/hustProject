@@ -28,4 +28,14 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "exam_id")
     Exam exam;
+
+    public Question(String question, String firstAnswer, String secondAnswer, String thirdAnswer, String fourthAnswer, String correctAnswer, Exam exam) {
+        this.question = question;
+        this.firstAnswer = firstAnswer;
+        this.secondAnswer = secondAnswer;
+        this.thirdAnswer = thirdAnswer;
+        this.fourthAnswer = fourthAnswer;
+        this.correctAnswer = correctAnswer;
+        this.exam = exam;
+    }
 }

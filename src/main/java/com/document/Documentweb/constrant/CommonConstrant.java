@@ -2,8 +2,10 @@ package com.document.Documentweb.constrant;
 
 public class CommonConstrant {
     public static final String DEFAULT_AVATAR = "uploads/avatars/default.jpg";
+    public static final String KEY = "?key=";
 
     public static final String NEW_OPERATOR = "＆（）｜＝＞＜～［］！，≠≁";
+    public static final String FORMAT = "tạo 20 câu hỏi trắc nhiệm có 4 đáp án, ký tự * nằm trước đáp án đúng , hãy trả lời theo đúng format : ## đề tài \n\n**Câu 1:**  câu hỏi 1\n* a) đáp án a\nb) đáp án b\nc) đáp án c\nd) đáp án d\n\n**Câu 2:**  câu hỏi 2:\na) đáp án a\n* b) đáp án b\nc) đáp án c\nd) đáp án d , sao cho các đáp án đúng đuợc phân boor đều từ a đến d, theo chủ đề : ";
 
     // ＆（）｜＝＞＜～［］！
     public static final String AND = "＆";

@@ -2,10 +2,12 @@ package com.document.Documentweb.controller;
 
 import com.document.Documentweb.dto.ResponseDTO;
 import com.document.Documentweb.dto.exam.ExamReqDTO;
+import com.document.Documentweb.dto.exam.ExamReqOpenAiDTO;
 import com.document.Documentweb.dto.exam.ExamResDTO;
 import com.document.Documentweb.dto.exam.ExamUpdateDTO;
 import com.document.Documentweb.dto.question.QuestionReqDTO;
 import com.document.Documentweb.service.exam.IExamService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,11 @@ public class ExamController {
         }
         service.upload(file, classId, subjectId);
         return ResponseEntity.ok(ResponseDTO.success());
+    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<ResponseDTO<String>> createByGemini(@RequestBody @Valid ExamReqOpenAiDTO dto) throws JsonProcessingException {
+        return ResponseEntity.ok(ResponseDTO.success(service.createQuestionByOpenAi(dto)));
     }
 
     @PutMapping

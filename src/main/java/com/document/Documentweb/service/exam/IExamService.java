@@ -1,8 +1,10 @@
 package com.document.Documentweb.service.exam;
 
 import com.document.Documentweb.dto.exam.ExamReqDTO;
+import com.document.Documentweb.dto.exam.ExamReqOpenAiDTO;
 import com.document.Documentweb.dto.exam.ExamResDTO;
 import com.document.Documentweb.dto.exam.ExamUpdateDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -20,4 +22,6 @@ public interface IExamService {
     void deleteAllById(List<Long> ids);
 
     void upload(MultipartFile file , Long classId, Long subjectId) throws IOException;
+
+    String createQuestionByOpenAi(ExamReqOpenAiDTO dto) throws JsonProcessingException;
 }

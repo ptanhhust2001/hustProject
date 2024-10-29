@@ -10,10 +10,7 @@ import com.document.Documentweb.dto.introspect.IntrospectResponse;
 import com.document.Documentweb.service.auth.IAuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -45,5 +42,4 @@ public class AuthenController {
     public ResponseDTO<AuthenticationResDTO> refreshToken(@RequestBody RefreshTokenReqDTO request) throws ParseException, JOSEException {
         return ResponseDTO.success(service.refreshToken(request));
     }
-
 }

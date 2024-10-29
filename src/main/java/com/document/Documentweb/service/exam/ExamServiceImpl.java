@@ -1,20 +1,23 @@
 package com.document.Documentweb.service.exam;
 
+import com.document.Documentweb.constrant.CommonConstrant;
 import com.document.Documentweb.constrant.ErrorCommon;
 import com.document.Documentweb.constrant.FunctionError;
 import com.document.Documentweb.dto.exam.ExamReqDTO;
+import com.document.Documentweb.dto.exam.ExamReqOpenAiDTO;
 import com.document.Documentweb.dto.exam.ExamResDTO;
 import com.document.Documentweb.dto.exam.ExamUpdateDTO;
 import com.document.Documentweb.entity.*;
 import com.document.Documentweb.exception.BookException;
 import com.document.Documentweb.repository.*;
+import com.document.Documentweb.service.openai.GeminiService;
 import com.document.Documentweb.utils.spec.BaseSpecs;
 import com.document.Documentweb.utils.spec.Utils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-//import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,7 @@ public class ExamServiceImpl implements IExamService{
     UserRepository userRepository;
     SubjectRepository subjectRepository;
     QuestionRepository questionRepository;
+    GeminiService geminiService;
 
     @Override
     public List<ExamResDTO> findAll(String advanceSearch) {
@@ -114,6 +118,48 @@ public class ExamServiceImpl implements IExamService{
             question.setExam(data);
         }
         questionRepository.saveAll(questions);
+    }
+
+    @Override
+    public String createQuestionByOpenAi(ExamReqOpenAiDTO dto) throws JsonProcessingException {
+        ExamResDTO resDTO = create(examMapper.map(dto, ExamReqDTO.class));
+        Exam data = repository.findById(resDTO.getId()).orElse(null);
+        String str = geminiService.generateContent(CommonConstrant.FORMAT + dto.getContent());
+        List<Question> questions = stringToQuestions(str, data);
+        questionRepository.saveAll(questions);
+        return str;
+    }
+
+    private List<Question> stringToQuestions(String input,Exam exam) {
+        // Tách câu hỏi từ chuỗi input
+        String[] questionsArray = input.split("\\*\\*Câu \\d+:\\*\\*");
+        List<Question> questionsList = new ArrayList<>();
+
+        // Bỏ qua phần đầu (tiêu đề) vì không có câu hỏi
+        for (int i = 1; i < questionsArray.length; i++) {
+            String questionBlock = questionsArray[i].trim();
+            String[] parts = questionBlock.split("\n");
+
+            // Câu hỏi
+            String questionText = parts[0].trim();
+
+            // Đáp án
+            String firstAnswer = parts[1].replaceAll("^[\\*]?\\s?a\\) ", "").trim();
+            String secondAnswer = parts[2].replaceAll("^[\\*]?\\s?b\\) ", "").trim();
+            String thirdAnswer = parts[3].replaceAll("^[\\*]?\\s?c\\) ", "").trim();
+            String fourthAnswer = parts[4].replaceAll("^[\\*]?\\s?d\\) ", "").trim();
+
+            // Xác định đáp án đúng
+            String correctAnswer = null;
+            if (parts[1].startsWith("*")) correctAnswer = "A";
+            else if (parts[2].startsWith("*")) correctAnswer = "B";
+            else if (parts[3].startsWith("*")) correctAnswer = "C";
+            else if (parts[4].startsWith("*")) correctAnswer = "D";
+
+            // Tạo đối tượng Question và thêm vào danh sách
+            questionsList.add(new Question(questionText, firstAnswer, secondAnswer, thirdAnswer, fourthAnswer, correctAnswer, exam));
+        }
+        return questionsList;
     }
 
     private List<Question> readData(Queue<List<String>> queue) {
