@@ -8,9 +8,9 @@ spring:
     show-sql: true
 
   datasource:
-    url: jdbc:mysql://localhost:3306/documentweb
-    username: root
-    password: 123456
+    url: ${YOUR_URL_MYSQL}
+    username: ${YOUR_USERNAME_MYSQL}
+    password: ${YOUR_PASSWORD_MYSQL}
 
 
   servlet:
@@ -19,7 +19,7 @@ spring:
       max-request-size: 20MB
 
 jwt:
-  signerKey: "3QCHBCeWYk5Nvf23KERk8Z45Bv3BHH3HZALSLWKq+gukKZP9ksb9/rvIVIUqqdFN"
+  signerKey: ${YOUR_SIGNER_KEY}
   expiration: 60  # 1 hour in seconds
   refreshable-duration: 120
 
@@ -37,6 +37,6 @@ avatar:
 
 openai:
   gemini:
-    apiKey: YOUR_API_KEY_GEMINI
+    apiKey: ${YOUR_API_KEY_GEMINI}
     model: gemini-1.5-flash-latest:generateContent
     url: https://generativelanguage.googleapis.com/v1beta/models/
