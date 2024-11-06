@@ -62,7 +62,7 @@ public class ExamController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<ResponseDTO<String>> createByGemini(@RequestBody @Valid ExamReqOpenAiDTO dto) throws JsonProcessingException {
+    public ResponseEntity<ResponseDTO<ExamResDTO>> createByGemini(@RequestBody @Valid ExamReqOpenAiDTO dto) throws JsonProcessingException {
         return ResponseEntity.ok(ResponseDTO.success(service.createQuestionByOpenAi(dto)));
     }
 

@@ -23,5 +23,5 @@ public interface IExamService {
 
     void upload(MultipartFile file , Long classId, Long subjectId) throws IOException;
 
-    String createQuestionByOpenAi(ExamReqOpenAiDTO dto) throws JsonProcessingException;
+    ExamResDTO createQuestionByOpenAi(ExamReqOpenAiDTO dto) throws JsonProcessingException;
 }

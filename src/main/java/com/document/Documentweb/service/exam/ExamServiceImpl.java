@@ -121,13 +121,13 @@ public class ExamServiceImpl implements IExamService{
     }
 
     @Override
-    public String createQuestionByOpenAi(ExamReqOpenAiDTO dto) throws JsonProcessingException {
+    public ExamResDTO createQuestionByOpenAi(ExamReqOpenAiDTO dto) throws JsonProcessingException {
         ExamResDTO resDTO = create(examMapper.map(dto, ExamReqDTO.class));
         Exam data = repository.findById(resDTO.getId()).orElse(null);
         String str = geminiService.generateContent(CommonConstrant.FORMAT + dto.getContent());
         List<Question> questions = stringToQuestions(str, data);
         questionRepository.saveAll(questions);
-        return str;
+        return resDTO;
     }
 
     private List<Question> stringToQuestions(String input,Exam exam) {
