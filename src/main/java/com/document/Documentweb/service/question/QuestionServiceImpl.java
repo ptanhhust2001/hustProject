@@ -70,7 +70,7 @@ public class QuestionServiceImpl implements IQuestionService{
     @Override
     public void deleteAllById(List<Long> ids) {
         List<Long> notFound =  ids.stream().filter(id -> repository.findById(id).isEmpty()).toList();
-        if(!notFound.isEmpty()) throw new BookException(FunctionError.DELETE_FAILSE, Map.of(ErrorCommon.QUESTION_NOT_FOUND, notFound));
+        if(!notFound.isEmpty()) throw new BookException(FunctionError.DELETE_FAILED, Map.of(ErrorCommon.QUESTION_NOT_FOUND, notFound));
         repository.deleteAllById(ids);
     }
 }

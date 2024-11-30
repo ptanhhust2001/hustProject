@@ -65,7 +65,7 @@ public class ClassServiceImpl implements IClassService{
         Map<Object, Object> errorMap = new HashMap<>();
 
         List<Subject> subjects = getAllSubjectByName(dto.getSubjects(), errorMap);
-        if (!errorMap.isEmpty()) throw new BookException(FunctionError.UPDATE_FAL, errorMap);
+        if (!errorMap.isEmpty()) throw new BookException(FunctionError.UPDATE_FAILED, errorMap);
         data.setSubjects(subjects);
         repository.save(data);
         return classMapper.map(data, ClassResDTO.class);
@@ -76,7 +76,7 @@ public class ClassServiceImpl implements IClassService{
         Map<Object, Object> errorMap = new HashMap<>();
         List<Long> notFound = ids.stream().filter(id -> repository.findById(id).isEmpty()).toList();
         if (!notFound.isEmpty()) errorMap.put(ErrorCommon.CLASS_NOT_FOUND, notFound);
-        if (!errorMap.isEmpty()) throw new BookException(FunctionError.DELETE_FAILSE, errorMap);
+        if (!errorMap.isEmpty()) throw new BookException(FunctionError.DELETE_FAILED, errorMap);
 
         repository.deleteAllById(ids);
     }
